@@ -17,64 +17,7 @@ const (
 
 var (
 	location *time.Location
-	_xTime   = new(xTime)
 )
-
-type xTime struct {
-	location *time.Location
-}
-
-// 获得时区
-func (xt *xTime) Location() *time.Location {
-	if xt.location != nil {
-		return xt.location
-	}
-	return GetLocation()
-}
-
-// 获得当前时间
-func (xt *xTime) Now() time.Time {
-	return time.Now().In(xt.Location())
-}
-
-// 获得今天开始时间
-func (xt *xTime) Today() time.Time {
-	now := xt.Now()
-	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, xt.Location())
-}
-
-// 获得今天结束时间
-func (xt *xTime) EndOfToday() time.Time {
-	now := xt.Now()
-	return time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, xt.Location())
-}
-
-// 获得明天开始时间
-func (xt *xTime) Tomorrow() time.Time {
-	t := xt.Now().Add(24 * time.Hour)
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, xt.Location())
-}
-
-// 获得昨天开始时间
-func (xt *xTime) Yesterday() time.Time {
-	t := xt.Now().Add(-24 * time.Hour)
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, xt.Location())
-}
-
-// 获得传入时间的开始时间
-func (xt *xTime) StartOfDay(t time.Time) time.Time {
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, xt.Location())
-}
-
-// 获得传入时间的结束时间
-func (xt *xTime) EndOfDay(t time.Time) time.Time {
-	return time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, xt.Location())
-}
-
-// 获得Unix开始时间
-func (xt *xTime) UnixStartTime() time.Time {
-	return time.Date(1970, 1, 1, 0, 0, 1, 0, xt.Location())
-}
 
 // 设置时区
 func SetLocation(loc *time.Location) {
@@ -89,49 +32,48 @@ func GetLocation() *time.Location {
 	return time.Local
 }
 
-// 指定时区创建时间对象
-func New(location *time.Location) *xTime {
-	return &xTime{location: location}
-}
-
 // 获取当前时间
 func Now() time.Time {
-	return _xTime.Now()
+	return time.Now().In(GetLocation())
 }
 
 // 获取今天的起始时间
 func Today() time.Time {
-	return _xTime.Today()
+	t := Now()
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
 }
 
 // 获取今天的结束时间
 func EndOfToday() time.Time {
-	return _xTime.EndOfToday()
+	t := Now()
+	return time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, GetLocation())
 }
 
 // 获取明天的起始时间
 func Tomorrow() time.Time {
-	return _xTime.Tomorrow()
+	t := Now().Add(24 * time.Hour)
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
 }
 
 // 获取昨天的起始时间
 func Yesterday() time.Time {
-	return _xTime.Yesterday()
+	t := Now().Add(-24 * time.Hour)
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
 }
 
 // 获取某一天的起始时间
 func StartOfDay(t time.Time) time.Time {
-	return _xTime.StartOfDay(t)
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
 }
 
 // 获取某一天的结束时间
 func EndOfDay(t time.Time) time.Time {
-	return _xTime.EndOfDay(t)
+	return time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, GetLocation())
 }
 
 // 获取Unix开始时间
 func UnixStartTime() time.Time {
-	return _xTime.UnixStartTime()
+	return time.Date(1970, 1, 1, 0, 0, 1, 0, GetLocation())
 }
 
 // 解析时间
