@@ -1,14 +1,17 @@
 package xtype
 
 import (
-	"fmt"
+	"strconv"
 	"strings"
 )
 
 var (
-	_ Collection = (*intSet)(nil)
-	_ Collection = (*int64Set)(nil)
-	_ Collection = (*stringSet)(nil)
+	_ IntCollection    = (*intCollection)(nil)
+	_ Int64Collection  = (*int64Collection)(nil)
+	_ StringCollection = (*stringCollection)(nil)
+	_ IntCollection    = (*intSet)(nil)
+	_ Int64Collection  = (*int64Set)(nil)
+	_ StringCollection = (*stringSet)(nil)
 )
 
 type Collection interface {
@@ -17,27 +20,179 @@ type Collection interface {
 	Join(string) string
 }
 
-//------------------------------------------------------------------------------
+type IntCollection interface {
+	Collection
 
-type intSet struct {
-	members []int
-	exists  map[int]bool
+	Add(...int)
+	Members() []int
+	Contains(int) bool
 }
 
-func (s *intSet) IsEmpty() bool {
+type Int64Collection interface {
+	Collection
+
+	Add(...int64)
+	Members() []int64
+	Contains(int64) bool
+}
+
+type StringCollection interface {
+	Collection
+
+	Add(...string)
+	Members() []string
+	Contains(string) bool
+}
+
+//------------------------------------------------------------------------------
+
+type intCollection struct {
+	members []int
+}
+
+func (s *intCollection) IsEmpty() bool {
 	return len(s.members) <= 0
 }
 
-func (s *intSet) Size() int {
+func (s *intCollection) Size() int {
 	return len(s.members)
 }
 
-func (s *intSet) Join(sep string) string {
-	str := ""
-	for _, v := range s.members {
-		str += fmt.Sprint(v) + sep
+func (s *intCollection) Join(sep string) string {
+	switch len(s.members) {
+	case 0:
+		return ""
+	case 1:
+		return strconv.Itoa(s.members[0])
 	}
-	return strings.Trim(str, sep)
+	str := strconv.Itoa(s.members[0])
+	for _, v := range s.members[1:] {
+		str += sep + strconv.Itoa(v)
+	}
+	return str
+}
+
+func (s *intCollection) Add(members ...int) {
+	for _, v := range members {
+		s.members = append(s.members, v)
+	}
+}
+
+func (s *intCollection) Members() []int {
+	return s.members
+}
+
+func (s *intCollection) Contains(val int) bool {
+	for _, v := range s.members {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
+
+func NewIntCollection(members ...int) *intCollection {
+	return &intCollection{members: members}
+}
+
+//------------------------------------------------------------------------------
+
+type int64Collection struct {
+	members []int64
+}
+
+func (s *int64Collection) IsEmpty() bool {
+	return len(s.members) <= 0
+}
+
+func (s *int64Collection) Size() int {
+	return len(s.members)
+}
+
+func (s *int64Collection) Join(sep string) string {
+	switch len(s.members) {
+	case 0:
+		return ""
+	case 1:
+		return strconv.FormatInt(s.members[0], 10)
+	}
+	str := strconv.FormatInt(s.members[0], 10)
+	for _, v := range s.members[1:] {
+		str += sep + strconv.FormatInt(v, 10)
+	}
+	return str
+}
+
+func (s *int64Collection) Add(members ...int64) {
+	for _, v := range members {
+		s.members = append(s.members, v)
+	}
+}
+
+func (s *int64Collection) Members() []int64 {
+	return s.members
+}
+
+func (s *int64Collection) Contains(val int64) bool {
+	for _, v := range s.members {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
+
+func NewInt64Collection(members ...int64) *int64Collection {
+	return &int64Collection{members: members}
+}
+
+//------------------------------------------------------------------------------
+
+type stringCollection struct {
+	members []string
+}
+
+func (s *stringCollection) IsEmpty() bool {
+	return len(s.members) <= 0
+}
+
+func (s *stringCollection) Size() int {
+	return len(s.members)
+}
+
+func (s *stringCollection) Join(sep string) string {
+	return strings.Join(s.members, sep)
+}
+
+func (s *stringCollection) Add(members ...string) {
+	for _, v := range members {
+		s.members = append(s.members, v)
+	}
+}
+
+func (s *stringCollection) Members() []string {
+	return s.members
+}
+
+func (s *stringCollection) Contains(val string) bool {
+	for _, v := range s.members {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
+
+func NewStringCollection(members ...string) *stringCollection {
+	return &stringCollection{members: members}
+}
+
+//------------------------------------------------------------------------------
+
+type intSet struct {
+	intCollection
+
+	exists map[int]bool
 }
 
 func (s *intSet) Add(members ...int) {
@@ -49,8 +204,8 @@ func (s *intSet) Add(members ...int) {
 	}
 }
 
-func (s *intSet) Members() []int {
-	return s.members
+func (s *intSet) Contains(val int) bool {
+	return s.exists[val]
 }
 
 func NewIntSet(members ...int) *intSet {
@@ -64,24 +219,9 @@ func NewIntSet(members ...int) *intSet {
 //------------------------------------------------------------------------------
 
 type int64Set struct {
-	members []int64
-	exists  map[int64]bool
-}
+	int64Collection
 
-func (s *int64Set) IsEmpty() bool {
-	return len(s.members) <= 0
-}
-
-func (s *int64Set) Size() int {
-	return len(s.members)
-}
-
-func (s *int64Set) Join(sep string) string {
-	str := ""
-	for _, v := range s.members {
-		str += fmt.Sprint(v) + sep
-	}
-	return strings.Trim(str, sep)
+	exists map[int64]bool
 }
 
 func (s *int64Set) Add(members ...int64) {
@@ -93,8 +233,8 @@ func (s *int64Set) Add(members ...int64) {
 	}
 }
 
-func (s *int64Set) Members() []int64 {
-	return s.members
+func (s *int64Set) Contains(val int64) bool {
+	return s.exists[val]
 }
 
 func NewInt64Set(members ...int64) *int64Set {
@@ -108,20 +248,9 @@ func NewInt64Set(members ...int64) *int64Set {
 //------------------------------------------------------------------------------
 
 type stringSet struct {
-	members []string
-	exists  map[string]bool
-}
+	stringCollection
 
-func (s *stringSet) IsEmpty() bool {
-	return len(s.members) <= 0
-}
-
-func (s *stringSet) Size() int {
-	return len(s.members)
-}
-
-func (s *stringSet) Join(sep string) string {
-	return strings.Join(s.members, sep)
+	exists map[string]bool
 }
 
 func (s *stringSet) Add(members ...string) {
@@ -133,8 +262,8 @@ func (s *stringSet) Add(members ...string) {
 	}
 }
 
-func (s *stringSet) Members() []string {
-	return s.members
+func (s *stringSet) Contains(val string) bool {
+	return s.exists[val]
 }
 
 func NewStringSet(members ...string) *stringSet {
