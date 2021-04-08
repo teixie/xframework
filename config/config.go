@@ -1,5 +1,5 @@
 package config
 
-func LoadFromYamlFile(cfg interface{}, path string) error {
+func LoadFromYamlFile(cfg interface{}, filename string) error {
 	return nil
 }

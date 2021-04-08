@@ -39,26 +39,22 @@ func Now() time.Time {
 
 // 获取今天的起始时间
 func Today() time.Time {
-	t := Now()
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
+	return StartOfDay(Now())
 }
 
 // 获取今天的结束时间
 func EndOfToday() time.Time {
-	t := Now()
-	return time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, GetLocation())
+	return EndOfDay(Now())
 }
 
 // 获取明天的起始时间
 func Tomorrow() time.Time {
-	t := Now().Add(24 * time.Hour)
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
+	return Today().Add(24 * time.Hour)
 }
 
 // 获取昨天的起始时间
 func Yesterday() time.Time {
-	t := Now().Add(-24 * time.Hour)
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, GetLocation())
+	return Today().Add(-24 * time.Hour)
 }
 
 // 获取某一天的起始时间
