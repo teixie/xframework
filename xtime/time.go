@@ -68,8 +68,8 @@ func EndOfDay(t time.Time) time.Time {
 }
 
 // 获取Unix开始时间
-func UnixStartTime() time.Time {
-	return time.Date(1970, 1, 1, 0, 0, 1, 0, GetLocation())
+func UnixZero() time.Time {
+	return time.Date(1970, 1, 1, 0, 0, 0, 0, GetLocation())
 }
 
 // 解析时间
