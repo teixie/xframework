@@ -89,7 +89,7 @@ func Parse(t interface{}) (time.Time, error) {
 		return time.Unix(t.(int64), 0), nil
 	}
 
-	return time.Time{}, fmt.Errorf("input type supported:time.Time,string,int,int64")
+	return time.Time{}, fmt.Errorf("supported input type:time.Time,string,int,int64")
 }
 
 // 时间格式化，格式如：YYYY-mm-dd HH:ii:ss
