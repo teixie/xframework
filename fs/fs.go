@@ -5,15 +5,15 @@ import (
 	"os"
 )
 
-func GetfileContents(filename string) ([]byte, error) {
+func GetFileContents(filename string) (data []byte, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
-		return nil, err
+		return
 	}
 	defer f.Close()
-	data, err := ioutil.ReadAll(f)
+	data, err = ioutil.ReadAll(f)
 	if err != nil {
-		return nil, err
+		return
 	}
-	return data, nil
+	return
 }
