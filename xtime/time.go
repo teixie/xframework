@@ -73,7 +73,7 @@ func UnixStartTime() time.Time {
 }
 
 // 解析时间
-func ParseTime(t interface{}) (time.Time, error) {
+func Parse(t interface{}) (time.Time, error) {
 	if t == nil {
 		return time.Time{}, nil
 	}
@@ -93,7 +93,7 @@ func ParseTime(t interface{}) (time.Time, error) {
 }
 
 // 时间格式化，格式如：YYYY-mm-dd HH:ii:ss
-func FormatTime(t time.Time, fmtStr string) string {
+func Format(t time.Time, fmtStr string) string {
 	exists, err := regexp.Match("[YymdHis]+", []byte(fmtStr))
 	if err == nil && !exists {
 		return t.Format(fmtStr)
