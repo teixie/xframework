@@ -6,8 +6,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func Load(config interface{}, file string) (err error) {
-	data, err := ioutil.ReadFile(file)
+func Load(config interface{}, files ...string) (err error) {
+	data, err := ioutil.ReadFile(files[0])
 	if err != nil {
 		return err
 	}
