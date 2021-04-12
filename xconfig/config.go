@@ -11,14 +11,14 @@ import (
 
 func Load(config interface{}, files ...string) (err error) {
 	for _, file := range files {
-		if err = LoadFile(config, file); err != nil {
+		if err = loadFile(config, file); err != nil {
 			return
 		}
 	}
 	return
 }
 
-func LoadFile(config interface{}, file string) (err error) {
+func loadFile(config interface{}, file string) (err error) {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
