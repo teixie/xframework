@@ -18,7 +18,7 @@ func Load(config interface{}, files ...string) (err error) {
 	return
 }
 
-func loadFile(config interface{}, file string) (err error) {
+func loadFile(config interface{}, file string) error {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
