@@ -30,6 +30,6 @@ func LoadFile(config interface{}, file string) (err error) {
 	case strings.HasSuffix(file, ".json"):
 		return json.Unmarshal(data, config)
 	default:
-		return errors.New("failed to decode configuration")
+		return errors.New("supported file type:yaml,json")
 	}
 }
