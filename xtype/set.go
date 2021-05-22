@@ -1,6 +1,7 @@
 package xtype
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -18,6 +19,7 @@ type Collection interface {
 	IsEmpty() bool
 	Size() int
 	Join(string) string
+	ToJSONString() (string, error)
 }
 
 type IntCollection interface {
@@ -72,6 +74,14 @@ func (s *intCollection) Join(sep string) string {
 	return str
 }
 
+func (s *intCollection) ToJSONString() (string, error) {
+	b, err := json.Marshal(s.members)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
 func (s *intCollection) Add(members ...int) {
 	for _, v := range members {
 		s.members = append(s.members, v)
@@ -92,7 +102,10 @@ func (s *intCollection) Contains(val int) bool {
 }
 
 func NewIntCollection(members ...int) *intCollection {
-	return &intCollection{members: members}
+	if len(members) > 0 {
+		return &intCollection{members: members}
+	}
+	return &intCollection{members: make([]int, 0)}
 }
 
 //------------------------------------------------------------------------------
@@ -123,6 +136,14 @@ func (s *int64Collection) Join(sep string) string {
 	return str
 }
 
+func (s *int64Collection) ToJSONString() (string, error) {
+	b, err := json.Marshal(s.members)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
 func (s *int64Collection) Add(members ...int64) {
 	for _, v := range members {
 		s.members = append(s.members, v)
@@ -143,7 +164,10 @@ func (s *int64Collection) Contains(val int64) bool {
 }
 
 func NewInt64Collection(members ...int64) *int64Collection {
-	return &int64Collection{members: members}
+	if len(members) > 0 {
+		return &int64Collection{members: members}
+	}
+	return &int64Collection{members: make([]int64, 0)}
 }
 
 //------------------------------------------------------------------------------
@@ -162,6 +186,14 @@ func (s *stringCollection) Size() int {
 
 func (s *stringCollection) Join(sep string) string {
 	return strings.Join(s.members, sep)
+}
+
+func (s *stringCollection) ToJSONString() (string, error) {
+	b, err := json.Marshal(s.members)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 func (s *stringCollection) Add(members ...string) {
@@ -184,7 +216,10 @@ func (s *stringCollection) Contains(val string) bool {
 }
 
 func NewStringCollection(members ...string) *stringCollection {
-	return &stringCollection{members: members}
+	if len(members) > 0 {
+		return &stringCollection{members: members}
+	}
+	return &stringCollection{members: make([]string, 0)}
 }
 
 //------------------------------------------------------------------------------
@@ -210,6 +245,9 @@ func (s *intSet) Contains(val int) bool {
 
 func NewIntSet(members ...int) *intSet {
 	set := &intSet{
+		intCollection: intCollection{
+			members: make([]int, 0),
+		},
 		exists: make(map[int]bool),
 	}
 	set.Add(members...)
@@ -239,6 +277,9 @@ func (s *int64Set) Contains(val int64) bool {
 
 func NewInt64Set(members ...int64) *int64Set {
 	set := &int64Set{
+		int64Collection: int64Collection{
+			members: make([]int64, 0),
+		},
 		exists: make(map[int64]bool),
 	}
 	set.Add(members...)
@@ -268,6 +309,9 @@ func (s *stringSet) Contains(val string) bool {
 
 func NewStringSet(members ...string) *stringSet {
 	set := &stringSet{
+		stringCollection: stringCollection{
+			members: make([]string, 0),
+		},
 		exists: make(map[string]bool),
 	}
 	set.Add(members...)
